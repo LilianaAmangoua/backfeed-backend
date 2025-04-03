@@ -26,6 +26,14 @@ public class User {
     @Column(name = "team_code")
     private String teamCode;
 
+    public User(String role, String email, String name, String password, String teamCode) {
+        this.role = role;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.teamCode = teamCode;
+    }
+
     @OneToMany(mappedBy = "user")
     private Set<Project> projects;
 
