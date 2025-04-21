@@ -42,4 +42,9 @@ public class User {
 
     @OneToMany(mappedBy = "productOwner")
     private Set<Developer> developers;
+
+    public String getRole() {
+        return this.role;
+    }
+
 }

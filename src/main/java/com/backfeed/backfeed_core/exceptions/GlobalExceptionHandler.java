@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception e) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "Une erreur interne est survenue.",
+                "An internal error has occurred.",
                 e.getMessage()
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFound ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND,
-                "Cet utilisateur n'a pas été trouvé.",
+                "This user was not found.",
                 ex.getMessage()
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJwtValidationException(JwtValidationException ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_ACCEPTABLE,
-                "Le token n'est pas valide.",
+                "Token is invalid",
                 ex.getMessage()
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
@@ -43,11 +43,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JwtTokenExpiredException.class)
     public ResponseEntity<ErrorResponse> handleJwtTokenExpiredException(JwtTokenExpiredException ex){
         ErrorResponse error = new ErrorResponse(
-                HttpStatus.NOT_ACCEPTABLE,
-                "Le token est expiré. Veuillez vous reconnecter.",
+                HttpStatus.FORBIDDEN,
+                "Token is expired. Please login or register.",
                 ex.getMessage()
         );
-        return new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
 

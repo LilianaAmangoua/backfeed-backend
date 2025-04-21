@@ -1,5 +1,6 @@
 package com.backfeed.backfeed_core.security;
 
+import com.backfeed.backfeed_core.exceptions.JwtValidationException;
 import com.backfeed.backfeed_core.services.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            System.out.println("Cannot set user authentication: " + e);
+            throw new JwtValidationException("Cannot set user authentication: " + e);
         }
         chain.doFilter(request, response);
     }
