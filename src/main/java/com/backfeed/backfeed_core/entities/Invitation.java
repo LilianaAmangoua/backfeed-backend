@@ -34,6 +34,15 @@ public class Invitation {
         this.invitationStatus = invitationStatus;
     }
 
+    public Invitation(String invitedEmail, User user, String roleAssigned, LocalDateTime expiryDate, InvitationStatus invitationStatus) {
+        this.invitedEmail = invitedEmail;
+        this.user = user;
+        this.roleAssigned = roleAssigned;
+        this.expiryDate = expiryDate;
+        this.invitationStatus = invitationStatus;
+    }
+
+
     public Integer getId() {
         return id;
     }

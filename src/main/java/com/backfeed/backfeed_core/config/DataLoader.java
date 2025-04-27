@@ -2,7 +2,6 @@ package com.backfeed.backfeed_core.config;
 
 import com.backfeed.backfeed_core.entities.Role;
 import com.backfeed.backfeed_core.entities.User;
-import com.backfeed.backfeed_core.exceptions.RoleNotFoundException;
 import com.backfeed.backfeed_core.repositories.RoleRepository;
 import com.backfeed.backfeed_core.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
