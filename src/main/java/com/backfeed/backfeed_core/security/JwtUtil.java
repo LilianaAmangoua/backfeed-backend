@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class JwtUtil {
@@ -26,12 +25,11 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public JwtToken generateToken(String email, String name, String teamCode){
+    public JwtToken generateToken(String email, String firstName){
         return new JwtToken(
                 Jwts.builder()
                         .setSubject(email)
-                        .claim("name", name)
-                        .claim("teamCode", teamCode)
+                        .claim("firstName", firstName)
                         .setIssuedAt(new Date())
                         .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                         .signWith(key, SignatureAlgorithm.HS256)
@@ -52,16 +50,17 @@ public class JwtUtil {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException e) {
-            throw new JwtValidationException("Signature JWT invalide");
+            throw new JwtValidationException("Invalid JWT signature.");
         } catch (MalformedJwtException e) {
-            throw new JwtValidationException("Token JWT invalid");
+            throw new JwtValidationException("Invalid JWT token.");
         } catch (ExpiredJwtException e) {
-            throw new JwtTokenExpiredException("Token JWT est expiré");
+            throw new JwtTokenExpiredException("JWT token has expired.");
         } catch (UnsupportedJwtException e) {
-            throw new JwtValidationException("Token JWT n'est pas pris en charge");
+            throw new JwtValidationException("Unsupported JWT token.");
         } catch (IllegalArgumentException e) {
-            throw new JwtValidationException("Claims JWT vides");
+            throw new JwtValidationException("JWT claims string is empty.");
         }
+
     }
 
 

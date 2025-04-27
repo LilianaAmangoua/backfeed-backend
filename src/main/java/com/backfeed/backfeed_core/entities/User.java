@@ -1,38 +1,42 @@
 package com.backfeed.backfeed_core.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "user")
-@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    private String role;
+    @NotNull(message = "Firstname cannot be null.")
+    private String firstName;
+    @NotNull(message = "Lastname cannot be null.")
+    private String lastName;
+    @Email(message = "Please insert a valid email address.")
     private String email;
-    private String name;
+
+    @Pattern(
+            regexp = "^(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-={}\\[\\]:;\"'<>,.?/]).{14,}$",
+            message = "Password must contain at least 14 characters, including at least one number and one special character."
+    )
     private String password;
 
-    @Column(name = "team_code")
-    private String teamCode;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
-    public User(String role, String email, String name, String password, String teamCode) {
-        this.role = role;
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        this.teamCode = teamCode;
-    }
+    @OneToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+    @OneToMany(mappedBy = "po")
+    private Set<FeedbackAnswer> poComments;
 
     @OneToMany(mappedBy = "user")
     private Set<Project> projects;
@@ -40,11 +44,156 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Feedback> feedbacks;
 
-    @OneToMany(mappedBy = "productOwner")
-    private Set<Developer> developers;
+    @OneToMany(mappedBy = "supervisor")
+    private Set<Hierarchy> supervisorHierarchies;
 
-    public String getRole() {
-        return this.role;
+    @OneToMany(mappedBy = "subordinate")
+    private Set<Hierarchy> subordinateHierarchies;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Invitation> invitations;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Company> createdCompanies;
+
+    public User() {
     }
 
+
+    public User(Integer id, String firstName, String lastName, String email, String password, Role role, Company company, Set<FeedbackAnswer> poComments, Set<Project> projects, Set<Feedback> feedbacks, Set<Hierarchy> supervisorHierarchies, Set<Hierarchy> subordinateHierarchies, Set<Invitation> invitations, Set<Company> createdCompanies) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.company = company;
+        this.poComments = poComments;
+        this.projects = projects;
+        this.feedbacks = feedbacks;
+        this.supervisorHierarchies = supervisorHierarchies;
+        this.subordinateHierarchies = subordinateHierarchies;
+        this.invitations = invitations;
+        this.createdCompanies = createdCompanies;
+    }
+
+    public User(String firstName, String lastName, String email, String password, Role role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Set<FeedbackAnswer> getPoComments() {
+        return poComments;
+    }
+
+    public void setPoComments(Set<FeedbackAnswer> poComments) {
+        this.poComments = poComments;
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
+
+    public Set<Hierarchy> getSupervisorHierarchies() {
+        return supervisorHierarchies;
+    }
+
+    public void setSupervisorHierarchies(Set<Hierarchy> supervisorHierarchies) {
+        this.supervisorHierarchies = supervisorHierarchies;
+    }
+
+    public Set<Hierarchy> getSubordinateHierarchies() {
+        return subordinateHierarchies;
+    }
+
+    public void setSubordinateHierarchies(Set<Hierarchy> subordinateHierarchies) {
+        this.subordinateHierarchies = subordinateHierarchies;
+    }
+
+    public Set<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(Set<Invitation> invitations) {
+        this.invitations = invitations;
+    }
+
+    public Set<Company> getCreatedCompanies() {
+        return createdCompanies;
+    }
+
+    public void setCreatedCompanies(Set<Company> createdCompanies) {
+        this.createdCompanies = createdCompanies;
+    }
 }

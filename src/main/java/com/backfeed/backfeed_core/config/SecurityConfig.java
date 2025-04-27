@@ -1,5 +1,6 @@
-package com.backfeed.backfeed_core.security;
+package com.backfeed.backfeed_core.config;
 
+import com.backfeed.backfeed_core.security.JwtFilter;
 import com.backfeed.backfeed_core.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Activer le cors
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // L’authentification est faite à chaque requête avec JWT, donc pas besoin d'une session Http
                 .authorizeHttpRequests(authorizeRequest -> authorizeRequest // Accès aux endpoints selon rôles
-                        .requestMatchers("/feedback/**").hasRole("PO")
+                        .requestMatchers("/admin/**").hasRole("PO")
+                        .requestMatchers("/client/**").hasRole("CLIENT")
+                        .requestMatchers("/dev/**").hasRole("DEVELOPER")
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Filtres avant
