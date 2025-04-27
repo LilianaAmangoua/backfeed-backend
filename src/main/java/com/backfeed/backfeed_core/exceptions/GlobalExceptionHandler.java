@@ -61,5 +61,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleRoleNotFoundException(RoleNotFoundException ex){
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND,
+                "Role not found.",
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
 
 }
