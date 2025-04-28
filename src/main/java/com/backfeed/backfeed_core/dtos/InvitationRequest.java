@@ -1,7 +1,12 @@
 package com.backfeed.backfeed_core.dtos;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+
 public class InvitationRequest {
+    @Email(message = "Email must be valid.")
     private String email;
+    @NotNull(message = "Firstname cannot be null.")
     private String firstName;
 
     public InvitationRequest() {

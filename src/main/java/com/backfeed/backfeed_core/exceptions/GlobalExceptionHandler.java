@@ -4,6 +4,8 @@ import com.backfeed.backfeed_core.exceptions.responses.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -69,6 +71,26 @@ public class GlobalExceptionHandler {
                 ex.getMessage()
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({MailException.class, MailSendException.class})
+    public ResponseEntity<ErrorResponse> handleMailNotSentException(Exception ex){
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Email could not be sent.",
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InvitationAlreadyPending.class)
+    public ResponseEntity<ErrorResponse> handleExistingInvitation(InvitationAlreadyPending ex){
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "Invitation already sent.",
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
 
