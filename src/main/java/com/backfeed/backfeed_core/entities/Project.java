@@ -12,10 +12,15 @@ public class Project {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "placeholder_id")
+    private PlaceholderClient client;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id")
     private User user;
 
     private String name;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     public Project() {

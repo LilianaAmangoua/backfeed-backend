@@ -4,6 +4,7 @@ import com.backfeed.backfeed_core.enums.CompanyType;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "company")
@@ -18,10 +19,13 @@ public class Company {
 
     @ManyToOne
     @JoinColumn(name = "created_by")
-    private User user;
+    private User po;
 
-    @OneToOne(mappedBy = "company")
-    private User userCompany;
+    @OneToMany(mappedBy = "company")
+    private Set<PlaceholderClient> clients;
+
+    @OneToMany(mappedBy = "company")
+    private Set<User> users;
 
     private LocalDateTime createdAt;
     private CompanyType companyType;
@@ -29,16 +33,15 @@ public class Company {
     public Company() {
     }
 
-    public Company(Integer id, String name, String address, String city, User user, User userCompany, LocalDateTime createdAt, CompanyType companyType) {
+    public Company(Integer id, String name, String address, String city, LocalDateTime createdAt, CompanyType companyType) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.city = city;
-        this.user = user;
-        this.userCompany = userCompany;
         this.createdAt = createdAt;
         this.companyType = companyType;
     }
+
 
     public String getName() {
         return name;
@@ -64,21 +67,14 @@ public class Company {
         this.city = city;
     }
 
-    public User getUser() {
-        return user;
+    public User getPo() {
+        return po;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setPo(User po) {
+        this.po = po;
     }
 
-    public User getUserCompany() {
-        return userCompany;
-    }
-
-    public void setUserCompany(User userCompany) {
-        this.userCompany = userCompany;
-    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

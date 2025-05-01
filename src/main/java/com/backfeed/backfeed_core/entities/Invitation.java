@@ -9,8 +9,7 @@ import java.time.LocalDateTime;
 @Table(name = "invitation")
 public class Invitation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id;
     private String invitedEmail;
 
     @ManyToOne
@@ -20,12 +19,13 @@ public class Invitation {
     private String roleAssigned;
     private LocalDateTime expiryDate;
     private InvitationStatus invitationStatus;
+    private String token;
 
 
     public Invitation() {
     }
 
-    public Invitation(Integer id, String invitedEmail, User user, String roleAssigned, LocalDateTime expiryDate, InvitationStatus invitationStatus) {
+    public Invitation(String id, String invitedEmail, User user, String roleAssigned, LocalDateTime expiryDate, InvitationStatus invitationStatus) {
         this.id = id;
         this.invitedEmail = invitedEmail;
         this.user = user;
@@ -42,12 +42,21 @@ public class Invitation {
         this.invitationStatus = invitationStatus;
     }
 
+    public Invitation(String invitedEmail, User user, String roleAssigned, LocalDateTime expiryDate, InvitationStatus invitationStatus, String token) {
+        this.invitedEmail = invitedEmail;
+        this.user = user;
+        this.roleAssigned = roleAssigned;
+        this.expiryDate = expiryDate;
+        this.invitationStatus = invitationStatus;
+        this.token = token;
+    }
 
-    public Integer getId() {
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -89,5 +98,13 @@ public class Invitation {
 
     public void setInvitationStatus(InvitationStatus invitationStatus) {
         this.invitationStatus = invitationStatus;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

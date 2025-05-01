@@ -17,9 +17,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception e) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "An internal error has occurred.",
-                e.getMessage()
-        );
+                "An internal error has occurred.");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -27,8 +25,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND,
-                "This user was not found.",
-                ex.getMessage()
+                "User not found."
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
@@ -37,8 +34,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJwtValidationException(JwtValidationException ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_ACCEPTABLE,
-                "Token is invalid.",
-                ex.getMessage()
+                "Token is invalid."
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
     }
@@ -47,8 +43,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJwtTokenExpiredException(JwtTokenExpiredException ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.FORBIDDEN,
-                "Token is expired. Please login.",
-                ex.getMessage()
+                "Authentication token has expired."
         );
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
@@ -57,8 +52,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.FORBIDDEN,
-                "Username or password is invalid.",
-                ex.getMessage()
+                "Invalid username or password."
         );
         return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
@@ -67,8 +61,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleRoleNotFoundException(RoleNotFoundException ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND,
-                "Role not found.",
-                ex.getMessage()
+                "Role not found."
         );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
@@ -77,8 +70,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMailNotSentException(Exception ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "Email could not be sent.",
-                ex.getMessage()
+                "A mail delivery error occurred."
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -87,11 +79,48 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleExistingInvitation(InvitationAlreadyPending ex){
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.BAD_REQUEST,
-                "Invitation already sent.",
-                ex.getMessage()
+                "Invitation already sent."
         );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InvitationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleInvitationNotFound(InvitationNotFoundException ex){
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND,
+                "Invitation not found."
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidInvitation.class)
+    public ResponseEntity<ErrorResponse> handleInvalidInvitation(InvalidInvitation ex){
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "Invitation not valid."
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserAlreadyExists.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(UserAlreadyExists ex){
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "User already exists."
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDenied.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDenied ex){
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.FORBIDDEN,
+                "Access denied."
+        );
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+
 
 
 }

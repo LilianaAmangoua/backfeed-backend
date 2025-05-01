@@ -6,15 +6,13 @@ import org.springframework.http.HttpStatus;
 public class ErrorResponse {
     private HttpStatus httpStatus;
     private String message;
-    private String errors;
 
     public ErrorResponse() {
     }
 
-    public ErrorResponse(HttpStatus httpStatus, String message, String errors) {
+    public ErrorResponse(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
-        this.errors = errors;
     }
 
     public HttpStatus getHttpStatus() {
@@ -33,11 +31,4 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    public String getErrors() {
-        return errors;
-    }
-
-    public void setErrors(String errors) {
-        this.errors = errors;
-    }
 }

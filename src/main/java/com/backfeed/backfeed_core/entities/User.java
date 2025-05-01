@@ -31,7 +31,7 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 
@@ -53,8 +53,11 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Invitation> invitations;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "po")
     private Set<Company> createdCompanies;
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<PlaceholderClient> placeholderClients;
 
     public User() {
     }
