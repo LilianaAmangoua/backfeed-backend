@@ -10,6 +10,10 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 public class User {
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,30 +66,21 @@ public class User {
     public User() {
     }
 
-
-    public User(Integer id, String firstName, String lastName, String email, String password, Role role, Company company, Set<FeedbackAnswer> poComments, Set<Project> projects, Set<Feedback> feedbacks, Set<Hierarchy> supervisorHierarchies, Set<Hierarchy> subordinateHierarchies, Set<Invitation> invitations, Set<Company> createdCompanies) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.company = company;
-        this.poComments = poComments;
-        this.projects = projects;
-        this.feedbacks = feedbacks;
-        this.supervisorHierarchies = supervisorHierarchies;
-        this.subordinateHierarchies = subordinateHierarchies;
-        this.invitations = invitations;
-        this.createdCompanies = createdCompanies;
-    }
-
     public User(String firstName, String lastName, String email, String password, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    public User(String firstName, String lastName, String email, String password, Role role, Company company) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.company = company;
     }
 
     public Integer getId() {

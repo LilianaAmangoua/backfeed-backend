@@ -1,15 +1,14 @@
 package com.backfeed.backfeed_core.controllers;
 
-import com.backfeed.backfeed_core.entities.Role;
+import com.backfeed.backfeed_core.dtos.RegisterRequest;
+import com.backfeed.backfeed_core.entities.CustomUserDetails;
 import com.backfeed.backfeed_core.entities.User;
-import com.backfeed.backfeed_core.exceptions.UserAlreadyExists;
-import com.backfeed.backfeed_core.exceptions.UserNotFoundException;
-import com.backfeed.backfeed_core.exceptions.responses.ErrorResponse;
 import com.backfeed.backfeed_core.exceptions.responses.SuccessResponse;
 import com.backfeed.backfeed_core.repositories.RoleRepository;
 import com.backfeed.backfeed_core.repositories.UserRepository;
 import com.backfeed.backfeed_core.security.JwtToken;
 import com.backfeed.backfeed_core.security.JwtUtil;
+import com.backfeed.backfeed_core.services.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,14 +29,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    public AuthController(AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, UserRepository userRepository, RoleRepository roleRepository) {
+    public AuthController(AuthenticationManager authenticationManager, AuthService authService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, UserRepository userRepository, RoleRepository roleRepository) {
         this.authenticationManager = authenticationManager;
+        this.authService = authService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
@@ -45,33 +46,19 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody User user){
-        boolean doesExist = userRepository.existsByEmail(user.getEmail());
-        if (doesExist) {
-            log.warn("User with id {} already exists", user.getId());
-            throw new UserAlreadyExists("User already exists");
-        }
-
-        User newUser = new User(
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                passwordEncoder.encode(user.getPassword()),
-                user.getRole()
-        );
-
-        userRepository.save(newUser);
-
+    public ResponseEntity<SuccessResponse> register(@Valid @RequestBody RegisterRequest request){
+        authService.register(request);
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.CREATED, "User successfully created."));
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody User user){
+    public ResponseEntity<SuccessResponse<JwtToken>> login(@RequestBody User user){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        JwtToken token = jwtUtil.generateToken(user.getId().toString());
+        Integer userId = ((CustomUserDetails) userDetails).getUser().getId();
+        JwtToken token = jwtUtil.generateToken(userId);
         return ResponseEntity.ok(new SuccessResponse<JwtToken>(HttpStatus.OK, "User successfully logged in.", token));
     }
 }

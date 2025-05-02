@@ -1,5 +1,6 @@
 package com.backfeed.backfeed_core.security;
 
+import com.backfeed.backfeed_core.dtos.InvitationToken;
 import com.backfeed.backfeed_core.exceptions.JwtTokenExpiredException;
 import com.backfeed.backfeed_core.exceptions.JwtValidationException;
 import io.jsonwebtoken.*;
@@ -30,10 +31,10 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public JwtToken generateToken(String userId){
+    public JwtToken generateToken(Integer userId){
         return new JwtToken(
                 Jwts.builder()
-                        .setSubject(userId)
+                        .setSubject(userId.toString())
                         .setIssuedAt(new Date())
                         .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                         .signWith(key, SignatureAlgorithm.HS256)
@@ -41,13 +42,17 @@ public class JwtUtil {
         );
     }
 
-    public String generateInvitationToken(String invitationId){
-        return Jwts.builder()
-                .setSubject(invitationId)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + invitationExpiration))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+    public InvitationToken generateInvitationToken(String invitationId){
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + invitationExpiration);
+
+        String token = Jwts.builder()
+                    .setSubject(invitationId)
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date((new Date()).getTime() + invitationExpiration))
+                    .signWith(key, SignatureAlgorithm.HS256)
+                    .compact();
+        return new InvitationToken(token, expirationDate);
     }
 
     public String getDataFromToken(String token) {

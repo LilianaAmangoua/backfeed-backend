@@ -1,6 +1,7 @@
 package com.backfeed.backfeed_core.services;
 
 import com.backfeed.backfeed_core.dtos.InvitationRequest;
+import com.backfeed.backfeed_core.dtos.InvitationToken;
 import com.backfeed.backfeed_core.entities.Invitation;
 import com.backfeed.backfeed_core.entities.Role;
 import com.backfeed.backfeed_core.entities.User;
@@ -90,7 +91,8 @@ public class InvitationService {
     private String generateTokenAndAssignId(Invitation invitation) {
         String id = UUID.randomUUID().toString();
         invitation.setId(id);
-        return jwtUtil.generateInvitationToken(id);
+        InvitationToken invitationToken = jwtUtil.generateInvitationToken(id);
+        return invitationToken.getToken();
     }
 
 
