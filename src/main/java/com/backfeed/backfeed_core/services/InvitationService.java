@@ -7,12 +7,15 @@ import com.backfeed.backfeed_core.entities.Role;
 import com.backfeed.backfeed_core.entities.User;
 import com.backfeed.backfeed_core.enums.InvitationStatus;
 import com.backfeed.backfeed_core.exceptions.AccessDenied;
+import com.backfeed.backfeed_core.exceptions.GlobalExceptionHandler;
 import com.backfeed.backfeed_core.exceptions.InvitationAlreadyPending;
 import com.backfeed.backfeed_core.exceptions.UserNotFoundException;
 import com.backfeed.backfeed_core.repositories.InvitationRepository;
 import com.backfeed.backfeed_core.repositories.UserRepository;
 import com.backfeed.backfeed_core.security.JwtUtil;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -24,6 +27,7 @@ import java.util.UUID;
 
 @Service
 public class InvitationService {
+
     private JwtUtil jwtUtil;
     private InvitationRepository invitationRepository;
     private UserRepository userRepository;
@@ -31,16 +35,16 @@ public class InvitationService {
     private int invitationExpiration;
     private CurrentUserService currentUserService;
     private JavaMailSender mailSender;
-    private Logger log;
+    private static final Logger log = LoggerFactory.getLogger(InvitationService.class);
 
     public InvitationService() {
     }
 
-    public InvitationService(JwtUtil jwtUtil, InvitationRepository invitationRepository, UserRepository userRepository, int invitationExpiration, CurrentUserService currentUserService, JavaMailSender mailSender) {
+    @Autowired
+    public InvitationService(JwtUtil jwtUtil, InvitationRepository invitationRepository, UserRepository userRepository, CurrentUserService currentUserService, JavaMailSender mailSender) {
         this.jwtUtil = jwtUtil;
         this.invitationRepository = invitationRepository;
         this.userRepository = userRepository;
-        this.invitationExpiration = invitationExpiration;
         this.currentUserService = currentUserService;
         this.mailSender = mailSender;
     }
@@ -61,6 +65,7 @@ public class InvitationService {
             sendEmail(request, link);
         } catch (MailException e) {
             log.error("Failed to send invitation email to {} : {}", request.getEmail(), e.getMessage());
+            return null;
         }
 
         return invitationRepository.save(invitation);

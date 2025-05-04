@@ -27,8 +27,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("Trying to load user with email: {}", email);
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User with email : " + email + " doesn't exist."));
-        log.warn("User doesn't exist : {}", email);
 
+        return new CustomUserDetails(user);
+    }
+
+    public UserDetails loadById(Integer id) throws UsernameNotFoundException {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id : " + id + " doesn't exist."));
         return new CustomUserDetails(user);
     }
 }

@@ -40,10 +40,11 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Activer le cors
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // L’authentification est faite à chaque requête avec JWT, donc pas besoin d'une session Http
                 .authorizeHttpRequests(authorizeRequest -> authorizeRequest // Accès aux endpoints selon rôles
-                        .requestMatchers("/admin/**").hasRole("PO, SUPER_ADMIN")
-                        .requestMatchers("/client/**").hasRole("CLIENT, SUPER_ADMIN")
-                        .requestMatchers("/dev/**").hasRole("DEVELOPER, SUPER_ADMIN")
+                        .requestMatchers("/admin/**").hasAnyRole("PO", "SUPER_ADMIN")
+                        .requestMatchers("/client/**").hasAnyRole("CLIENT", "SUPER_ADMIN")
+                        .requestMatchers("/dev/**").hasAnyRole("DEVELOPER", "SUPER_ADMIN")
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().hasRole("SUPER_ADMIN")
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Filtres avant
