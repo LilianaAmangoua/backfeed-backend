@@ -8,12 +8,23 @@ import com.backfeed.backfeed_core.repositories.InvitationRepository;
 import com.backfeed.backfeed_core.repositories.PlaceholderClientRepository;
 import com.backfeed.backfeed_core.repositories.RoleRepository;
 import com.backfeed.backfeed_core.repositories.UserRepository;
+import com.backfeed.backfeed_core.security.JwtToken;
 import com.backfeed.backfeed_core.security.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -29,9 +40,12 @@ public class AuthService {
     private final PlaceholderClientRepository placeholderClientRepository;
     private final InvitationService invitationService;
     private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
+    @Value("${jwt.expiration}")
+    private int jwtExpirationMs;
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, InvitationRepository invitationRepository, RoleRepository roleRepository, PlaceholderClientRepository placeholderClientRepository, InvitationService invitationService, JwtUtil jwtUtil) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, InvitationRepository invitationRepository, RoleRepository roleRepository, PlaceholderClientRepository placeholderClientRepository, InvitationService invitationService, JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.invitationRepository = invitationRepository;
@@ -39,6 +53,7 @@ public class AuthService {
         this.placeholderClientRepository = placeholderClientRepository;
         this.invitationService = invitationService;
         this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
     }
 
     public void register(RegisterRequest registerRequest){
@@ -56,6 +71,24 @@ public class AuthService {
         invitation.setInvitationStatus(ACCEPTED);
 
         userRepository.save(newUser);
+    }
+
+    public void login(User user, HttpServletResponse response){
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        Integer userId = ((CustomUserDetails) userDetails).getUser().getId();
+        JwtToken token = jwtUtil.generateToken(userId);
+
+        ResponseCookie cookie = ResponseCookie.from("jwt", token.getToken())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(Duration.ofSeconds(jwtExpirationMs))
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     private Invitation isRequestValid(String token){
@@ -84,7 +117,7 @@ public class AuthService {
     private void doesUserExist(String email){
         boolean doesExist = userRepository.existsByEmail(email);
         if (doesExist) {
-            log.warn("User with email {} already exists", email);
+            log.info("User with email {} already exists", email);
             throw new UserAlreadyExists("User already exists");
         }
     }

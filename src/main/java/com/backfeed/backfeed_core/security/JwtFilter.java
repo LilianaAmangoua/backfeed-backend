@@ -5,6 +5,7 @@ import com.backfeed.backfeed_core.exceptions.JwtValidationException;
 import com.backfeed.backfeed_core.services.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -40,11 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwt != null && jwtUtil.validateJwtToken(jwt)) {
                 String id = jwtUtil.getDataFromToken(jwt);
                 UserDetails userDetails = userDetailsService.loadById(Integer.valueOf(id));
-                String roles = userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)  // Récupère le rôle (authority)
-                        .collect(Collectors.joining(", "));   // Joindre les rôles avec une virgule
 
-                log.info("User roles : {}", roles);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
@@ -61,10 +58,15 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-        if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }
+
 }

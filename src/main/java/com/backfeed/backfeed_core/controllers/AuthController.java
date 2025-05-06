@@ -9,6 +9,7 @@ import com.backfeed.backfeed_core.repositories.UserRepository;
 import com.backfeed.backfeed_core.security.JwtToken;
 import com.backfeed.backfeed_core.security.JwtUtil;
 import com.backfeed.backfeed_core.services.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +54,8 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<SuccessResponse<JwtToken>> login(@RequestBody User user){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        Integer userId = ((CustomUserDetails) userDetails).getUser().getId();
-        JwtToken token = jwtUtil.generateToken(userId);
-        return ResponseEntity.ok(new SuccessResponse<JwtToken>(HttpStatus.OK, "User successfully logged in.", token));
+    public ResponseEntity<SuccessResponse> login(@RequestBody User user, HttpServletResponse response){
+        authService.login(user, response);
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, "User successfully logged in."));
     }
 }
