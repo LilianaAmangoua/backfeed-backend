@@ -94,14 +94,14 @@ mvn spring-boot:run
 
 Une documentation Swagger de l'API sera disponible à l'adresse suivante après démarrage de l'application:
 ```
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
 ```
 
 ## 🔒 Sécurité
 
 BackFeed utilise Spring Security pour la gestion de l'authentification et des autorisations.
 
-L'API implémente:
+L'API implémente :
 - Authentification JWT avec gestion des tokens
 - Gestion des rôles et des permissions
 - Protection CSRF
@@ -112,7 +112,7 @@ La sécurité des données est renforcée par l'utilisation de variables d'envir
 
 ## 🛣️ Roadmap
 
-Fonctionnalités à venir:
+Fonctionnalités à venir :
 - Transformation des feedbacks en tickets pour les développeurs
 - Ajout de refresh token pour améliorer la sécurité de l'authentification
 - Assignation automatique des tickets

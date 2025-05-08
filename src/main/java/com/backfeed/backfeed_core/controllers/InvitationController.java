@@ -22,7 +22,7 @@ public class InvitationController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<SuccessResponse> register(@Valid @RequestBody InvitationRequest request){
+    public ResponseEntity<SuccessResponse<Void>> register(@Valid @RequestBody InvitationRequest request){
         invitationService.sendInvitation(request);
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.CREATED, "Invitation successfully sent."));
     }
