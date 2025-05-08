@@ -30,12 +30,19 @@ public class Hierarchy {
     }
 
     public Hierarchy(User supervisor, User subordinate, LocalDateTime creationDate) {
+        if (supervisor == null || subordinate == null) {
+            throw new IllegalArgumentException("Supervisor and subordinate cannot be null");
+        }
+
         this.supervisor = supervisor;
         this.subordinate = subordinate;
+
         this.supervisorId = supervisor.getId();
         this.subordinateId = subordinate.getId();
+
         this.creationDate = creationDate;
     }
+
 
     public User getSupervisor() {
         return supervisor;

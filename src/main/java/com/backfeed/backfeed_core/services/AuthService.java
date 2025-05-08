@@ -4,10 +4,7 @@ import com.backfeed.backfeed_core.dtos.RegisterRequest;
 import com.backfeed.backfeed_core.entities.*;
 import com.backfeed.backfeed_core.enums.InvitationStatus;
 import com.backfeed.backfeed_core.exceptions.*;
-import com.backfeed.backfeed_core.repositories.InvitationRepository;
-import com.backfeed.backfeed_core.repositories.PlaceholderClientRepository;
-import com.backfeed.backfeed_core.repositories.RoleRepository;
-import com.backfeed.backfeed_core.repositories.UserRepository;
+import com.backfeed.backfeed_core.repositories.*;
 import com.backfeed.backfeed_core.security.JwtToken;
 import com.backfeed.backfeed_core.security.JwtUtil;
 import org.slf4j.Logger;
@@ -34,19 +31,21 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final InvitationRepository invitationRepository;
     private final RoleRepository roleRepository;
-    private final PlaceholderClientRepository placeholderClientRepository;;
+    private final PlaceholderClientRepository placeholderClientRepository;
+    private final HierarchyRepository hierarchyRepository;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, InvitationRepository invitationRepository, RoleRepository roleRepository, PlaceholderClientRepository placeholderClientRepository, JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, InvitationRepository invitationRepository, RoleRepository roleRepository, PlaceholderClientRepository placeholderClientRepository, HierarchyRepository hierarchyRepository, JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.invitationRepository = invitationRepository;
         this.roleRepository = roleRepository;
         this.placeholderClientRepository = placeholderClientRepository;
+        this.hierarchyRepository = hierarchyRepository;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
     }
@@ -57,6 +56,8 @@ public class AuthService {
         String token = registerRequest.getToken();
         doesUserExist(email);
         Invitation invitation = isRequestValid(token);
+        Integer inviterId = invitation.getUser().getId();
+        User inviter = userRepository.findById(inviterId).orElseThrow(() -> new UserNotFoundException("Inviter with id : " + inviterId + " not found."));
 
         Role assignedRole = roleRepository.findByName(invitation.getRoleAssigned());
 
@@ -66,6 +67,10 @@ public class AuthService {
         userRepository.save(newUser);
         invitation.setInvitationStatus(ACCEPTED);
         invitationRepository.save(invitation);
+
+        Hierarchy hierarchy = new Hierarchy(inviter, newUser, LocalDateTime.now());
+        hierarchyRepository.save(hierarchy);
+
     }
 
     public JwtToken login(User user){
