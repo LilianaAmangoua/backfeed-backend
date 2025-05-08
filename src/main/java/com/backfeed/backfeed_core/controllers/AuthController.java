@@ -29,33 +29,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final AuthService authService;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    public AuthController(AuthenticationManager authenticationManager, AuthService authService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, UserRepository userRepository, RoleRepository roleRepository) {
-        this.authenticationManager = authenticationManager;
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<SuccessResponse> register(@Valid @RequestBody RegisterRequest request){
+    public ResponseEntity<SuccessResponse<Void>> register(@Valid @RequestBody RegisterRequest request){
         authService.register(request);
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.CREATED, "User successfully created."));
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<SuccessResponse> login(@RequestBody User user, HttpServletResponse response){
-        authService.login(user, response);
-        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, "User successfully logged in."));
+    public ResponseEntity<SuccessResponse<JwtToken>> login(@RequestBody User user){
+        JwtToken token = authService.login(user);
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, "User successfully logged in.", token));
     }
 }

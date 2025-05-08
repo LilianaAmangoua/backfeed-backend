@@ -7,8 +7,8 @@ import com.backfeed.backfeed_core.entities.Role;
 import com.backfeed.backfeed_core.entities.User;
 import com.backfeed.backfeed_core.enums.InvitationStatus;
 import com.backfeed.backfeed_core.exceptions.AccessDenied;
-import com.backfeed.backfeed_core.exceptions.GlobalExceptionHandler;
 import com.backfeed.backfeed_core.exceptions.InvitationAlreadyPending;
+import com.backfeed.backfeed_core.exceptions.InvitationException;
 import com.backfeed.backfeed_core.exceptions.UserNotFoundException;
 import com.backfeed.backfeed_core.repositories.InvitationRepository;
 import com.backfeed.backfeed_core.repositories.UserRepository;
@@ -50,10 +50,10 @@ public class InvitationService {
     }
 
 
-    public Invitation sendInvitation(InvitationRequest request) {
+    public void sendInvitation(InvitationRequest request) {
         Integer id = currentUserService.getCurrentUserId();
         User inviter = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found."));
+                .orElseThrow(() -> new UserNotFoundException("User with id : " + id + "was not found."));
 
         String role = assignInvitedRole(inviter);
         validateNoPendingInvitation(request.getEmail());
@@ -64,17 +64,15 @@ public class InvitationService {
         try {
             sendEmail(request, link);
         } catch (MailException e) {
-            log.error("Failed to send invitation email to {} : {}", request.getEmail(), e.getMessage());
-            return null;
+            throw new InvitationException("Failed to send invitation email to " + request.getEmail() + " : " + e.getMessage());
         }
 
-        return invitationRepository.save(invitation);
+        invitationRepository.save(invitation);
     }
 
     private void validateNoPendingInvitation(String email) {
         if (invitationRepository.isAlreadyInvited(email, InvitationStatus.PENDING).isPresent()) {
-            log.warn("User tried to send a second invitation to: {}", email);
-            throw new InvitationAlreadyPending("Invitation already sent.");
+            throw new InvitationAlreadyPending("User tried to send a second invitation to: " + email);
         }
     }
 
@@ -122,8 +120,7 @@ public class InvitationService {
         } else if(role.getName().equals("PO")){
             return "CLIENT";
         } else {
-            log.warn("User {} tried to send an invitation with this role : {}", inviter.getId(), role.getName());
-            throw new AccessDenied("Cannot send invitation.");
+            throw new AccessDenied("User" +  inviter.getId() + " tried to send an invitation with this role : " + role.getName());
         }
     }
 
