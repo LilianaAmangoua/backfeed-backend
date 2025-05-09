@@ -1,12 +1,12 @@
 # BackFeed
 
-## 📋 Présentation
+## Présentation
 
 BackFeed est une API REST développée avec Spring Boot, Maven et Spring Security, conçue pour aider les Product Owners à collecter, organiser et gérer efficacement les retours de leurs clients.
 
 Ce projet vise à répondre à un besoin courant chez les clients grands comptes : la structuration de la gestion des retours utilisateurs (bugs, suggestions, demandes d'évolution) pour les équipes Produit et IT.
 
-## 🎯 Fonctionnalités principales
+## Fonctionnalités principales
 
 L'application permet aux Product Owners de :
 
@@ -15,7 +15,7 @@ L'application permet aux Product Owners de :
 - Transformer les feedbacks en tickets exploitables par les développeurs *(fonctionnalité à venir)*
 - Assigner ces tickets aux membres des équipes techniques *(fonctionnalité à venir)*
 
-## 🔐 Gestion des droits
+## Gestion des droits
 
 BackFeed implémente un système de contrôle d'accès basé sur les rôles (RBAC) avec Spring Security.
 
@@ -90,34 +90,55 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-## 📚 Documentation API
+## Documentation API
 
-Une documentation Swagger de l'API sera disponible à l'adresse suivante après démarrage de l'application:
+Une documentation Swagger de l'API est disponible à l'adresse suivante après démarrage de l'application:
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
 
-## 🔒 Sécurité
+## Sécurité
 
 BackFeed utilise Spring Security pour la gestion de l'authentification et des autorisations.
 
 L'API implémente :
 - Authentification JWT avec gestion des tokens
 - Gestion des rôles et des permissions
-- Protection CSRF
 - Validation des entrées
 - Chiffrement des mots de passe
 
 La sécurité des données est renforcée par l'utilisation de variables d'environnement pour stocker les informations sensibles comme les identifiants de base de données et les secrets JWT.
 
-## 🛣️ Roadmap
+## 🛣️ Roadmap - Fonctionnalités à venir :
 
-Fonctionnalités à venir :
-- Transformation des feedbacks en tickets pour les développeurs
-- Ajout de refresh token pour améliorer la sécurité de l'authentification
-- Assignation automatique des tickets
-- Envoi d'emails automatisé pour la gestion des tickets
-- Dockerisation du projet pour faciliter le déploiement
+### Feedback & Collaboration client
 
+* Création de feedbacks client (avec typologie : bug / amélioration / suggestion)
+* Modification possible des feedbacks tant que leur statut est "à traiter"
+* Tri et filtres dynamiques (par projet, statut, priorité)
+* Ajout de réponses/commentaires par les PO aux feedbacks
+* Attribution d'un statut métier aux feedbacks ("à traiter", "en cours", "terminé")
 
+### Tickets développeur
 
+* Transformation des feedbacks en tickets exploitables
+* Attribution manuelle ou automatique des tickets à un développeur
+* Suivi des tickets côté PO et développeurs (filtrage, tri, statut)
+* Gestion des statuts des tickets : "à faire", "en cours", "terminé"
+
+### Notifications
+
+* Notification du client lorsqu'un feedback change de statut
+* Notification du PO quand un ticket est terminé par un développeur
+
+### Infrastructure & DevOps
+
+* Dockerisation de l'application (API, base de données, front)
+* Intégration d'un système d'emails transactionnels (invitations, notifications)
+
+### Dashboard & KPIs
+
+* Nombre total de feedbacks soumis
+* Répartition des types de feedbacks (bug, amélioration, suggestion)
+* Feedbacks les plus fréquents ou les plus importants
+* Suivi des livraisons (feedbacks transformés en tickets et livrés)
