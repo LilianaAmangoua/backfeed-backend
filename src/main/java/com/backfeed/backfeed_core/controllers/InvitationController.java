@@ -1,7 +1,6 @@
 package com.backfeed.backfeed_core.controllers;
 
 import com.backfeed.backfeed_core.dtos.InvitationRequest;
-import com.backfeed.backfeed_core.dtos.RegisterRequest;
 import com.backfeed.backfeed_core.exceptions.responses.SuccessResponse;
 import com.backfeed.backfeed_core.services.InvitationService;
 import jakarta.validation.Valid;

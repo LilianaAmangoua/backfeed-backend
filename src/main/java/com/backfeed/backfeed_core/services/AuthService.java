@@ -85,6 +85,7 @@ public class AuthService {
         }
     }
 
+    @Transactional
     private Invitation isRequestValid(String token){
         boolean isTokenValid = jwtUtil.validateJwtToken(token);
         String invitationId = jwtUtil.getDataFromToken(token);
