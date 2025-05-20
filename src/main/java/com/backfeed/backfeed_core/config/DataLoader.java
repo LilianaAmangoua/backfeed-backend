@@ -37,7 +37,14 @@ public class DataLoader implements ApplicationRunner {
             role = roleRepository.save(new Role("SUPER_ADMIN"));
         }
 
-        User superAdmin = new User("Super", "Admin", email, passwordEncoder.encode(password), role);
+        User superAdmin = User.builder()
+                .firstName("Super")
+                .lastName("Admin")
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .role(role)
+                .build();
+
         if(userRepository.existsByEmail(email)){
             return;
         }

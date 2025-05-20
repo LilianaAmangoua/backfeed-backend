@@ -50,7 +50,13 @@ public class InvitationServiceTest {
 
         InvitationRequest request = new InvitationRequest("hi@gmail.com", "Hi");
         Role role = new Role("PO");
-        User inviter = new User("Po", "lastname", "po@company.com", "password", role);
+        User inviter = User.builder()
+                .firstName("Po")
+                .lastName("lastname")
+                .email("po@company.com")
+                .password("password")
+                .role(role)
+                .build();
         InvitationToken token = new InvitationToken("fakeToken", new Date());
         when(currentUserService.getCurrentUserId()).thenReturn(1);
         when(userRepository.findById(1)).thenReturn(Optional.of(inviter));

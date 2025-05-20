@@ -3,11 +3,19 @@ package com.backfeed.backfeed_core.entities;
 import com.backfeed.backfeed_core.enums.FeedbackStatus;
 import com.backfeed.backfeed_core.enums.FeedbackType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "feedback")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,92 +38,5 @@ public class Feedback {
     private FeedbackAnswer feedbackAnswer;
 
 
-    public Feedback() {
-    }
-
-
-    public Feedback(Integer id, User user, String title, FeedbackType feedbackType, FeedbackStatus status, String content, LocalDateTime createdAt, LocalDateTime updatedAt, FeedbackAnswer feedbackAnswer) {
-        this.id = id;
-        this.user = user;
-        this.title = title;
-        this.feedbackType = feedbackType;
-        this.status = status;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.feedbackAnswer = feedbackAnswer;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public FeedbackType getFeedbackType() {
-        return feedbackType;
-    }
-
-    public void setFeedbackType(FeedbackType feedbackType) {
-        this.feedbackType = feedbackType;
-    }
-
-    public FeedbackStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(FeedbackStatus status) {
-        this.status = status;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public FeedbackAnswer getFeedbackAnswer() {
-        return feedbackAnswer;
-    }
-
-    public void setFeedbackAnswer(FeedbackAnswer feedbackAnswer) {
-        this.feedbackAnswer = feedbackAnswer;
-    }
 }
 

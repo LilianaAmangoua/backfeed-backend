@@ -77,13 +77,13 @@ public class InvitationService {
     }
 
     private Invitation createInvitation(String email, User inviter, String role) {
-        Invitation invitation = new Invitation(
-                email,
-                inviter,
-                role,
-                LocalDateTime.now().plusSeconds(invitationExpiration),
-                InvitationStatus.PENDING
-        );
+        Invitation invitation = Invitation.builder()
+                .invitedEmail(email)
+                .user(inviter)
+                .roleAssigned(role)
+                .expiryDate(LocalDateTime.now().plusSeconds(invitationExpiration))
+                .invitationStatus(InvitationStatus.PENDING)
+                .build();
 
         String token = generateTokenAndAssignId(invitation);
         invitation.setToken(token);

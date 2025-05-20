@@ -48,7 +48,14 @@ public class AuthServiceTest {
     @Test
     void shouldLogTheUser(){
         Role role = new Role("PO");
-        User user = new User("Po", "lastname", "po@company.com", "password", role);
+        User user = User.builder()
+            .firstName("Po")
+            .lastName("lastname")
+            .email("po@company.com")
+            .password("password")
+            .role(role)
+            .build();
+
         user.setId(2);
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
