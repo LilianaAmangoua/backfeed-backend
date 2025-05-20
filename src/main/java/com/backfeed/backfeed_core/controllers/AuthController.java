@@ -1,5 +1,6 @@
 package com.backfeed.backfeed_core.controllers;
 
+import com.backfeed.backfeed_core.dtos.LoginRequest;
 import com.backfeed.backfeed_core.dtos.RegisterRequest;
 import com.backfeed.backfeed_core.entities.User;
 import com.backfeed.backfeed_core.exceptions.responses.ApiResult;
@@ -44,8 +45,8 @@ public class AuthController {
             description = "Logs in a user using email and password, and returns a JWT token in response."
     )
     @PostMapping("/login")
-    public ResponseEntity<ApiResult<JwtToken>> login(@RequestBody User user) {
-        JwtToken token = authService.login(user);
+    public ResponseEntity<ApiResult<JwtToken>> login(@RequestBody LoginRequest request) {
+        JwtToken token = authService.login(request);
         return ResponseEntity.ok(ApiResult.success("User successfully logged in.", HttpStatus.OK, token));
     }
 }

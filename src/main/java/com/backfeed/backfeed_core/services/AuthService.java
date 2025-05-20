@@ -1,5 +1,6 @@
 package com.backfeed.backfeed_core.services;
 
+import com.backfeed.backfeed_core.dtos.LoginRequest;
 import com.backfeed.backfeed_core.entities.*;
 import com.backfeed.backfeed_core.exceptions.*;
 import com.backfeed.backfeed_core.security.JwtToken;
@@ -23,9 +24,9 @@ public class AuthService {
     }
 
 
-    public JwtToken login(User user){
+    public JwtToken login(LoginRequest request){
         try{
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
             Integer userId = ((CustomUserDetails) userDetails).getUser().getId();
